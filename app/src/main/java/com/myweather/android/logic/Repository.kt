@@ -1,6 +1,8 @@
 package com.myweather.android.logic
 
 import androidx.lifecycle.liveData
+import com.myweather.android.logic.dao.PlaceDao
+import com.myweather.android.logic.model.Place
 import com.myweather.android.logic.model.Weather
 import com.myweather.android.logic.network.MyWeatherNetwork
 import kotlinx.coroutines.Dispatchers
@@ -53,5 +55,11 @@ object Repository {
             }
             emit(result)
         }
+
+    fun savePlace(place: Place) = PlaceDao.savePlace(place)
+
+    fun getSavedPlace() = PlaceDao.getSavedPlace()
+
+    fun isPlaceSaved() = PlaceDao.isPlaceSaved()
 
 }

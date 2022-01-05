@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myweather.android.R
 import com.myweather.android.logic.model.Weather
 import com.myweather.android.logic.model.getSky
@@ -34,6 +35,7 @@ class WeatherActivity : AppCompatActivity() {
         if (viewModel.placeName.isEmpty()) {
             viewModel.placeName = intent.getStringExtra("place_name") ?: ""
         }
+        val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         viewModel.weatherLiveData.observe(this, Observer { result ->
             val weather = result.getOrNull()
             if (weather != null) {
@@ -42,8 +44,18 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this, "无法成功获取天气信息", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
+            swipeRefresh.isRefreshing = false
         })
+        swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+        refreshWeather(swipeRefresh)
+        swipeRefresh.setOnRefreshListener {
+            refreshWeather(swipeRefresh)
+        }
+    }
+
+    fun refreshWeather(swipeRefresh: SwipeRefreshLayout) {
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        swipeRefresh.isRefreshing = true;
     }
 
     private fun showWeatherInfo(weather: Weather) {
